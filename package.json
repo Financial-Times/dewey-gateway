@@ -1,0 +1,25 @@
+{
+  "name": "dewey-gateway",
+  "version": "1.0.0",
+  "description": "Adds authentication to dewey",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "dewey",
+    "dewey gateway",
+    "s3o",
+    "authentication",
+    "router"
+  ],
+  "dependencies": {
+    "aws-sdk": "^2.4.10",
+    "express": "^4.14.0",
+    "s3o-middleware": "^1.7.0"
+  },
+  "engines": {
+    "node": "5.3.0"
+  }
+}
