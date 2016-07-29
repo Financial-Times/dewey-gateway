@@ -15,3 +15,7 @@ deployment:
       - heroku maintenance:on --app oi-dewey-gateway-prod
       - git push git@heroku.com:oi-dewey-gateway-prod.git $CIRCLE_SHA1:refs/heads/master
       - heroku maintenance:off --app oi-dewey-gateway-prod
+
+test:
+  override:
+    - touch no-tests
