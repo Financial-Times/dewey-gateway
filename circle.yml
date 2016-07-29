@@ -1,0 +1,17 @@
+machine:
+  nodejs:
+
+deployment:
+  staging:
+    branch: test
+    commands:
+      - heroku maintenance:on --app oi-dewey-gateway-test
+      - git push git@heroku.com:oi-dewey-gateway-test.git $CIRCLE_SHA1:refs/heads/master
+      - heroku maintenance:off --app oi-dewey-gateway-test
+
+  production:
+    branch: master
+    commands:
+      - heroku maintenance:on --app oi-dewey-gateway-prod
+      - git push git@heroku.com:oi-dewey-gateway-prod.git $CIRCLE_SHA1:refs/heads/master
+      - heroku maintenance:off --app oi-dewey-gateway-prod
