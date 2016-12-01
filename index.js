@@ -31,6 +31,7 @@ app.use(function(req, res) {
 			res.status(502).send("Internal AWS error: " + error.message);
 		}
 	});
+    res.setHeader('Cache-Control', 'no-cache');
 	res.setHeader('content-type', 'text/html');
 	stream.pipe(res);
 });
