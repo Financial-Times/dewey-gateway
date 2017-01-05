@@ -17,9 +17,9 @@
   "dependencies": {
     "aws-sdk": "^2.4.10",
     "express": "^4.14.0",
-    "s3o-middleware": "^1.7.0"
+    "s3o-middleware": "^1.8.0"
   },
   "engines": {
-    "node": "5.3.0"
+    "node": "6.9.1"
   }
 }
