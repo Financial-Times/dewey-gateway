@@ -21,7 +21,7 @@ app.use(function(req, res) {
 
 	// Default to index page
 	if (!key) key = "index.html";
-	if (!key.endsWith(".html")) key += ".html";
+	if (key.indexOf(".") == -1) key += ".html";   //only add extension if no extension is provided
 	var params = {Bucket: deweyBucket, Key: key};
 	var stream = s3.getObject(params).createReadStream();
 	stream.on('error', function (error) {
