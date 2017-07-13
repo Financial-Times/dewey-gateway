@@ -20,6 +20,6 @@
     "s3o-middleware": "^1.8.0"
   },
   "engines": {
-    "node": "6.9.1"
+    "node": "6.11.1"
   }
 }
