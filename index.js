@@ -1,42 +1,51 @@
-const express = require('express');
-const app = express();
-const authS3O = require('s3o-middleware');
-app.use(authS3O);
-const AWS = require('aws-sdk');
-const url = require('url');
+'use strict'
 
-/** Environment variables **/
-var port = process.env.PORT || 3001;
-var deweyBucket = process.env.DEWEY_LIBRARY || 'dewey-render';
+const logger = require('@financial-times/n-logger').default
+const path = require('path')
+const express = require('express')
+const authS3O = require('s3o-middleware')
+const AWS = require('aws-sdk')
+const url = require('url')
 
-AWS.config = new AWS.Config();
-AWS.config.accessKeyId = process.env.AWS_ACCESS_KEY;
-AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
-const s3 = new AWS.S3();
-app.use(function(req, res) {
-	var url_parts = url.parse(req.url);
+const app = express()
+app.use(authS3O)
 
-	// Strip off the slash from the path
-	var key = url_parts.pathname.substr(1);
+/** Environment variables * */
+const port = process.env.PORT || 3001
+const deweyBucket = process.env.DEWEY_LIBRARY || 'dewey-render'
 
-	// Default to index page
-	if (!key) key = "index.html";
-	if (key.indexOf(".") == -1) key += ".html";   //only add extension if no extension is provided
-	var params = {Bucket: deweyBucket, Key: key};
-	var stream = s3.getObject(params).createReadStream();
-	stream.on('error', function (error) {
-		if (error.statusCode == 404) {
-			res.status(404).send("404: Page not found");
-		} else {
-			console.error(e);
-			res.status(502).send("Internal AWS error: " + error.message);
-		}
-	});
-    res.setHeader('Cache-Control', 'no-cache');
-	res.setHeader('content-type', 'text/html');
-	stream.pipe(res);
-});
+AWS.config = new AWS.Config()
+AWS.config.accessKeyId = process.env.AWS_ACCESS_KEY
+AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY
 
-app.listen(port, function () {
-  console.log('App listening on port '+port);
-});
+const s3 = new AWS.S3()
+
+app.use((request, response) => {
+    response.setHeader('Cache-Control', 'no-cache')
+    response.setHeader('content-type', 'text/html')
+
+    const urlParts = url.parse(request.url)
+
+    const key = urlParts.pathname.substr(1) || 'index.html'
+
+    const suffixedKey = path.extname(key) ? key : `${key}.html`
+
+    s3
+        .getObject({ Bucket: deweyBucket, Key: suffixedKey })
+        .createReadStream()
+        .on('error', error => {
+            if (error.statusCode === 404) {
+                response.status(404).send('404: Page not found')
+            } else {
+                logger.error(error)
+                response
+                    .status(502)
+                    .send(`Internal AWS error: ${error.message}`)
+            }
+        })
+        .pipe(response)
+})
+
+app.listen(port, () => {
+    logger.info(`App listening on port ${port}`)
+})
