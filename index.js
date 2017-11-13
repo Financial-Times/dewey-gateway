@@ -32,7 +32,7 @@ app.use(function(req, res) {
 			res.status(502).send("Internal AWS error: " + error.message);
 		}
 	});
-    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
 	res.setHeader('content-type', 'text/html');
 	stream.pipe(res);
 });
