@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 6.11.1
+    version: 6.10.3
 
 deployment:
   staging:
@@ -20,3 +20,10 @@ deployment:
 test:
   override:
     - touch no-tests
+
+experimental:
+  notify:
+    branches:
+      only:
+        - master
+        - test
