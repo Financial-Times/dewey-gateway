@@ -21,7 +21,7 @@ AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
 const s3 = new AWS.S3();
 
 app.use((request, response) => {
-    response.setHeader('Cache-Control', 'no-cache');
+    response.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
     response.setHeader('content-type', 'text/html');
 
     const urlParts = url.parse(request.url);
