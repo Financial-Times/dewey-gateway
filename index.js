@@ -21,12 +21,16 @@ AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
 const s3 = new AWS.S3();
 
 app.use((request, response) => {
-    response.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+    response.setHeader(
+        'Cache-Control',
+        'private, no-cache, no-store, must-revalidate, max-age=0'
+    );
     response.setHeader('content-type', 'text/html');
 
     const urlParts = url.parse(request.url);
 
-    const key = urlParts.pathname.substr(1) || 'index.html';
+    const key =
+        urlParts.pathname.replace(/^(\/runbooks)?\/?/, '') || 'index.html';
 
     const suffixedKey = path.extname(key) ? key : `${key}.html`;
 
