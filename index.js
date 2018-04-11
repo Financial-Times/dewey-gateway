@@ -64,9 +64,11 @@ const attachRoutes = router => {
     return router;
 };
 
-const router = attachRoutes(express.Router());
+const runbookRouter = attachRoutes(express.Router());
+const baseRouter = attachRoutes(express.Router());
 
-app.use('/(runbooks)?', router);
+app.use('/runbooks', runbookRouter);
+app.use('/', baseRouter);
 
 app.listen(port, () => {
     logger.info(`App listening on port ${port}`);
