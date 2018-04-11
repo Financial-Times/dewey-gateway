@@ -17,13 +17,22 @@
   },
   "author": "Tooling Team",
   "lint-staged": {
-    "*.{js,json}": ["eslint --cache --fix", "git add"]
+    "*.{js,json}": [
+      "eslint --cache --fix",
+      "git add"
+    ]
   },
   "engines": {
     "node": ">=6.10.3 <9.0.0",
     "npm": ">=5.3.0"
   },
-  "keywords": ["dewey", "dewey gateway", "s3o", "authentication", "router"],
+  "keywords": [
+    "dewey",
+    "dewey gateway",
+    "s3o",
+    "authentication",
+    "router"
+  ],
   "dependencies": {
     "@financial-times/n-logger": "^5.5.7",
     "aws-sdk": "^2.4.10",

@@ -11,7 +11,15 @@ const app = express();
 
 app.set('trust proxy', 2);
 
-app.use(authS3O);
+const overrideHostHeaderForS3o = (request) => Object.assign({}, request, {
+    headers: Object.assign({}, request.headers, {
+        host: request.hostname
+    })
+})
+
+app.use((request, response, next) =>
+    authS3O(overrideHostHeaderForS3o(request), response, next)
+);
 
 /** Environment variables * */
 const port = process.env.PORT || 3001;
