@@ -32,7 +32,7 @@ const getKey = (systemCode = 'index') => {
     return path.extname(systemCode) ? systemCode : `${systemCode}.html`;
 };
 
-const getItem = (request, response) => {
+const getItem = (request, response, next) => {
     response.setHeader(
         'Cache-Control',
         'private, no-cache, no-store, must-revalidate, max-age=0'
@@ -48,7 +48,7 @@ const getItem = (request, response) => {
         .createReadStream()
         .on('error', error => {
             if (error.statusCode === 404) {
-                return response.status(404).send('404: Page not found');
+                return next();
             }
             logger.error(error);
             return response
