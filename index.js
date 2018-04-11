@@ -20,22 +20,23 @@ AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
 
 const s3 = new AWS.S3();
 
+const getKey = (requestPath) => {
+    const key = requestPath.replace(/^\//, '') || 'index'
+
+    return path.extname(key) ? key : `${key}.html`;
+}
+
 app.use((request, response) => {
     response.setHeader(
         'Cache-Control',
         'private, no-cache, no-store, must-revalidate, max-age=0'
     );
-    response.setHeader('content-type', 'text/html');
+    response.setHeader('Content-Type', 'text/html');
 
-    const urlParts = url.parse(request.url);
-
-    const key =
-        urlParts.pathname.replace(/^(\/runbooks)?\/?/, '') || 'index.html';
-
-    const suffixedKey = path.extname(key) ? key : `${key}.html`;
+    const key = getKey(request.path);
 
     s3
-        .getObject({ Bucket: deweyBucket, Key: suffixedKey })
+        .getObject({ Bucket: deweyBucket, Key: key })
         .createReadStream()
         .on('error', error => {
             if (error.statusCode === 404) {
