@@ -39,7 +39,7 @@ const getItem = (request, response, next) => {
     );
     response.setHeader('Content-Type', 'text/html');
 
-    const key = getKey(request.params.systemCode);
+    const key = getKey(request.params && request.params.systemCode);
 
     logger.info({ key }, 'Getting object from S3');
 
@@ -59,6 +59,7 @@ const getItem = (request, response, next) => {
 };
 
 const attachRoutes = router => {
+    router.use('/', getItem);
     router.use('/:systemCode', getItem);
     return router;
 };
