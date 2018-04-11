@@ -44,6 +44,8 @@ const getItem = (request, response) => {
 
     const key = getKey(request.params.systemCode);
 
+    logger.info({ key }, 'Getting object from S3');
+
     s3
         .getObject({ Bucket: deweyBucket, Key: key })
         .createReadStream()
