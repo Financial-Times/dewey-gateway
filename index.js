@@ -5,21 +5,6 @@ const path = require('path');
 const express = require('express');
 const authS3O = require('s3o-middleware');
 const AWS = require('aws-sdk');
-const url = require('url');
-
-const app = express();
-
-app.set('trust proxy', 2);
-
-const overrideHostHeaderForS3o = (request) => Object.assign({}, request, {
-    headers: Object.assign({}, request.headers, {
-        host: request.hostname
-    })
-})
-
-app.use((request, response, next) =>
-    authS3O(overrideHostHeaderForS3o(request), response, next)
-);
 
 /** Environment variables * */
 const port = process.env.PORT || 3001;
@@ -29,22 +14,35 @@ AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.AWS_ACCESS_KEY;
 AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
 
+const app = express();
+
+app.set('trust proxy', 2);
+
+const overrideHostHeaderForS3o = request =>
+    Object.assign({}, request, {
+        headers: Object.assign({}, request.headers, {
+            host: request.hostname
+        })
+    });
+
+app.use((request, response, next) =>
+    authS3O(overrideHostHeaderForS3o(request), response, next)
+);
+
 const s3 = new AWS.S3();
 
-const getKey = (requestPath) => {
-    const key = requestPath.replace(/^\//, '') || 'index'
+const getKey = (systemCode = 'index') => {
+    return path.extname(systemCode) ? systemCode : `${systemCode}.html`;
+};
 
-    return path.extname(key) ? key : `${key}.html`;
-}
-
-app.use((request, response) => {
+const getItem = (request, response) => {
     response.setHeader(
         'Cache-Control',
         'private, no-cache, no-store, must-revalidate, max-age=0'
     );
     response.setHeader('Content-Type', 'text/html');
 
-    const key = getKey(request.path);
+    const key = getKey(request.params.systemCode);
 
     s3
         .getObject({ Bucket: deweyBucket, Key: key })
@@ -60,7 +58,18 @@ app.use((request, response) => {
             }
         })
         .pipe(response);
-});
+};
+
+const attachRoutes = router => {
+    router.get('/:systemCode', getItem);
+    return router;
+};
+
+const runbookRouter = attachRoutes(express.Router());
+const baseRouter = attachRoutes(express.Router());
+
+app.use('/', baseRouter);
+app.use('/runbooks', runbookRouter);
 
 app.listen(port, () => {
     logger.info(`App listening on port ${port}`);
