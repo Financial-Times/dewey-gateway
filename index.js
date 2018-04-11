@@ -18,16 +18,13 @@ const app = express();
 
 app.set('trust proxy', 2);
 
-const overrideHostHeaderForS3o = request =>
-    Object.assign({}, request, {
-        headers: Object.assign({}, request.headers, {
-            host: request.hostname
-        })
-    });
+const overrideHostHeaderForS3o = (request, response, next) => {
+    request.header.host = request.hostname;
+    next();
+};
 
-app.use((request, response, next) =>
-    authS3O(overrideHostHeaderForS3o(request), response, next)
-);
+app.use(overrideHostHeaderForS3o);
+app.use(authS3O);
 
 const s3 = new AWS.S3();
 
