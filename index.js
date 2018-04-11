@@ -49,19 +49,18 @@ const getItem = (request, response) => {
         .createReadStream()
         .on('error', error => {
             if (error.statusCode === 404) {
-                response.status(404).send('404: Page not found');
-            } else {
-                logger.error(error);
-                response
-                    .status(502)
-                    .send(`Internal AWS error: ${error.message}`);
+                return response.status(404).send('404: Page not found');
             }
+            logger.error(error);
+            return response
+                .status(502)
+                .send(`Internal AWS error: ${error.message}`);
         })
         .pipe(response);
 };
 
 const attachRoutes = router => {
-    router.get('/:systemCode', getItem);
+    router.use('/:systemCode', getItem);
     return router;
 };
 
