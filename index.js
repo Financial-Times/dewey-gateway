@@ -33,15 +33,16 @@ const getKey = (systemCode = 'index') => {
 };
 
 const getItem = (request, response, next) => {
+    const { params } = request;
     response.setHeader(
         'Cache-Control',
         'private, no-cache, no-store, must-revalidate, max-age=0'
     );
     response.setHeader('Content-Type', 'text/html');
 
-    const key = getKey(request.params && request.params.systemCode);
+    const key = getKey(params && params.systemCode);
 
-    logger.info({ key }, 'Getting object from S3');
+    logger.info({ key, params }, 'Getting object from S3');
 
     s3
         .getObject({ Bucket: deweyBucket, Key: key })
