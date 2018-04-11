@@ -60,8 +60,8 @@ const getItem = (request, response, next) => {
 };
 
 const attachRoutes = router => {
-    router.use('/', getItem);
     router.use('/:systemCode', getItem);
+    router.use('/', getItem);
     return router;
 };
 
