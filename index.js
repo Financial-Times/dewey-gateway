@@ -19,7 +19,7 @@ const app = express();
 app.set('trust proxy', 2);
 
 const overrideHostHeaderForS3o = (request, response, next) => {
-    request.header.host = request.hostname;
+    request.headers.host = request.hostname;
     next();
 };
 
