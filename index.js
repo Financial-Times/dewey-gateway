@@ -40,7 +40,7 @@ const getItem = (request, response, next) => {
     );
     response.setHeader('Content-Type', 'text/html');
 
-    const key = getKey(params && params.systemCode);
+    const key = getKey(params.systemCode);
 
     logger.info({ key, params }, 'Getting object from S3');
 
