@@ -8,6 +8,16 @@ const AWS = require('aws-sdk');
 const url = require('url');
 
 const app = express();
+
+app.use((request, response, next) => {
+    const forwardedHost = request.get('x_original_host');
+    if (forwardedHost) {
+        request.host = forwardedHost;
+        request.headers.host = forwardedHost;
+    }
+    next();
+});
+
 app.use(authS3O);
 
 /** Environment variables * */
